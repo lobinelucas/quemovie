@@ -1,0 +1,7 @@
+# chaves nunca vão pro GitHub
+.tmdb_key
+.chaves
+# arquivos de trabalho que não são do site
+selo_opcoes.html
+sentimentos.csv
+__pycache__/

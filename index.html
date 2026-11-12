@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Que Movie, o catálogo</title>
+<link rel="icon" href="marca/simbolo.png">
+<style>
+@font-face {
+  font-family: "Archivo QM";
+  src: url(fontes/archivo.woff2) format("woff2");
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  font-display: swap;
+}
+:root {
+  /* Folheto de cinema de bairro: preto com grão, creme e laranja das capas antigas; letra condensada como nos carrosséis */
+  --bg: #12100e;
+  --surface: #1c1916;
+  --ink: #f1e9d6;
+  --muted: #9a907f;
+  --line: #2e2924;
+  --orange: #f15f29;
+  --yellow: #f2b33d;
+  --cream: #f6efda;
+  --display: "Archivo QM", "Arial Narrow", Impact, sans-serif;
+  --body: "Archivo QM", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html { background: var(--bg); -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22160%22%20height%3D%22160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%22.9%22%20numOctaves%3D%222%22%20stitchTiles%3D%22stitch%22/%3E%3CfeColorMatrix%20values%3D%220%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%20.06%200%22/%3E%3C/filter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url%28%23n%29%22/%3E%3C/svg%3E");
+  font: 400 16px/1.45 var(--body); font-stretch: 100%;
+  padding-left: max(18px, env(safe-area-inset-left, 0px));
+  padding-right: max(18px, env(safe-area-inset-right, 0px));
+  padding-top: max(20px, env(safe-area-inset-top, 0px));
+  padding-bottom: max(32px, env(safe-area-inset-bottom, 0px));
+}
+.wrap { max-width: 560px; margin: 0 auto; display: grid; gap: 16px; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+/* topo */
+.top { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding-bottom: 14px; border-bottom: 2px solid var(--ink); }
+.logo { display: block; height: 44px; width: auto; }
+.handle { font: 700 13px/1 var(--display); font-stretch: 75%; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); text-decoration: none; padding-bottom: 4px; }
+.handle:hover { color: var(--ink); }
+.pergunta { margin: 0; font: 850 40px/.9 var(--display); font-stretch: 62%; text-transform: uppercase; letter-spacing: .005em; text-wrap: balance; }
+.pergunta b { color: var(--orange); font-weight: inherit; }
+.sub { margin: -10px 0 0; color: var(--muted); font-size: 15px; }
+
+/* sentimentos: botões grandes, fáceis de tocar */
+.sents { display: flex; flex-wrap: wrap; gap: 7px 6px; }
+.sent {
+  background: transparent; color: var(--ink); cursor: pointer;
+  border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 12px 9px;
+  font: 800 15.5px/1 var(--display); font-stretch: 70%; text-transform: uppercase; letter-spacing: .02em;
+}
+.sent:hover { border-color: var(--muted); }
+.sent[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #12100e; }
+.sent span { font-size: 11px; vertical-align: super; margin-left: 3px; color: var(--orange); letter-spacing: 0; }
+.sent[aria-pressed="true"] span { color: #12100e; }
+
+/* linha de baixo: tipo + selo */
+.linha { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding-top: 4px; border-top: 1px solid var(--line); }
+.selo-btn { display: inline-flex; align-items: center; gap: 7px; background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--muted);
+  font: 800 17px/1 var(--display); font-stretch: 70%; text-transform: uppercase; letter-spacing: .02em; }
+.selo-btn img { width: 26px; height: 26px; opacity: .55; transform: rotate(-12deg); }
+.selo-btn[aria-pressed="true"] { color: var(--ink); }
+.selo-btn[aria-pressed="true"] img { opacity: 1; }
+.cover img.selo-capa { position: absolute; right: 5%; bottom: 4%; width: 38%; height: auto; transform: rotate(-12deg); filter: drop-shadow(0 2px 3px rgba(0,0,0,.5)); pointer-events: none; }
+
+/* busca */
+.search { position: relative; }
+.search label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.search input {
+  width: 100%; appearance: none; background: transparent; color: var(--ink);
+  border: 0; border-bottom: 1px solid var(--muted); border-radius: 0;
+  font: 500 19px/1.2 var(--body); padding: 10px 34px 11px 0;
+}
+.search input::placeholder { color: #6a6256; }
+.search input:focus { outline: none; border-bottom-color: var(--orange); }
+.clear { position: absolute; right: 0; top: 6px; background: none; border: 0; color: var(--muted); font: 600 22px/1 var(--body); padding: 6px; cursor: pointer; }
+.clear[hidden] { display: none; }
+
+/* filtros: só texto, sem caixinha */
+.tipo { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; }
+.tipo button {
+  background: none; border: 0; padding: 4px 0; cursor: pointer; color: var(--muted);
+  font: 800 17px/1 var(--display); font-stretch: 70%; text-transform: uppercase; letter-spacing: .02em;
+}
+.tipo button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--orange); text-decoration-thickness: 3px; text-underline-offset: 6px; }
+
+/* letreiro da prateleira */
+.shelf { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 0; }
+.shelf h1 { margin: 0; font: 850 40px/.9 var(--display); font-stretch: 64%; text-transform: uppercase; color: var(--orange); text-wrap: balance; }
+.shelf p { margin: 0 0 4px; color: var(--muted); font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; font-variant-numeric: tabular-nums; }
+
+/* grade de capas */
+.grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 26px 12px; }
+.item a { display: grid; gap: 10px; text-decoration: none; }
+.cover { position: relative; container-type: inline-size; aspect-ratio: 3 / 4; overflow: hidden; background: var(--surface); }
+.cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.item a:active .cover { transform: translateY(1px); }
+/* capa provisória no estilo das capas antigas: cor chapada + título condensado */
+.ph { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 10px 11px 12px; background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22160%22%20height%3D%22160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%22.9%22%20numOctaves%3D%222%22%20stitchTiles%3D%22stitch%22/%3E%3CfeColorMatrix%20values%3D%220%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%20.06%200%22/%3E%3C/filter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url%28%23n%29%22/%3E%3C/svg%3E"); }
+.ph.c0 { background-color: var(--orange); color: #12100e; }
+.ph.c1 { background-color: var(--cream); color: #12100e; }
+.ph.c2 { background-color: #1c1916; color: var(--cream); box-shadow: inset 0 0 0 1px var(--line); }
+.ph .tag { align-self: flex-end; font: 850 11px/1 var(--display); font-stretch: 75%; letter-spacing: .08em; }
+.ph .t { font: 850 17cqi/.88 var(--display); font-stretch: 62%; text-transform: uppercase; overflow-wrap: break-word; text-wrap: balance; }
+.ph .y { display: block; margin-top: 6px; font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .06em; opacity: .7; }
+.cap { display: grid; gap: 2px; }
+.cap .titulo-t { font: 800 13px/1.15 var(--display); font-stretch: 70%; text-transform: uppercase; letter-spacing: .03em; color: var(--orange); text-wrap: balance; }
+.cap .sents-n { font-size: 12px; line-height: 1.3; color: var(--muted); }
+.cap .onde { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 4px; }
+.cap .onde img { display: block; width: auto; opacity: .5; }
+.cap .onde img.hbo { height: 19px; }
+.cap .onde img.prime { height: 16px; }
+.cap .onde img.netflix { height: 12.5px; }
+.cap .onde img.appletv { height: 15px; }
+.cap .onde span:not(.aviso) { opacity: .5; }
+.cap .onde span { font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+.cap .onde span.aviso { font-size: 13px; line-height: 1.15; color: var(--yellow); }
+
+.vazio { border-top: 2px solid var(--ink); padding: 18px 0; color: var(--muted); display: grid; gap: 6px; }
+.vazio b { color: var(--ink); font: 800 24px/1 var(--display); font-stretch: 68%; text-transform: uppercase; }
+
+footer { border-top: 2px solid var(--ink); padding-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 14px; }
+footer img { height: 16px; width: auto; opacity: .9; margin-left: auto; }
+/* crédito exigido pelo TMDB, o mais discreto possível */
+.credito { margin: -8px 0 0; text-align: left; font-size: 10px; color: var(--muted); opacity: .45; }
+.credito a { color: inherit; text-decoration: none; }
+.fonte { margin: -8px 0 0; font-size: 12px; color: var(--muted); }
+.fonte a { color: var(--muted); }
+footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--orange); text-underline-offset: 3px; }
+
+@media (min-width: 520px) {
+  .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .shelf h1 { font-size: 60px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a href="https://www.instagram.com/quemovie/" aria-label="Que Movie no Instagram"><img class="logo" src="marca/logo.png" alt="Que Movie"></a>
+    <a class="handle" href="https://www.instagram.com/quemovie/">@quemovie</a>
+  </header>
+
+  <h2 class="pergunta">Tá a fim de <b>sentir o quê?</b></h2>
+
+  <div class="sents" id="sents" role="group" aria-label="Sentimento"></div>
+
+  <div class="linha">
+    <div class="tipo" role="group" aria-label="Tipo">
+      <button type="button" data-tipo="" aria-pressed="true">Tudo</button>
+      <button type="button" data-tipo="filme" aria-pressed="false">Movie</button>
+      <button type="button" data-tipo="serie" aria-pressed="false">Série</button>
+      <button type="button" data-tipo="minisserie" aria-pressed="false">Minissérie</button>
+    </div>
+  </div>
+
+  <div class="search">
+    <label for="q">Buscar</label>
+    <input id="q" type="search" placeholder="Busca por nome ou streaming" autocomplete="off" enterkeyhint="search">
+    <button class="clear" id="limpar" type="button" aria-label="Limpar busca" hidden>×</button>
+  </div>
+
+  <section aria-live="polite">
+    <div class="shelf"><h1 id="titulo">Tudo</h1></div>
+  </section>
+
+  <ul class="grid" id="grade"></ul>
+
+  <footer>
+    <img src="marca/simbolo.png" alt="">
+  </footer>
+  <p class="credito" id="fonte" hidden>Dados: <a href="https://www.justwatch.com/br">JustWatch</a></p>
+</div>
+
+<script src="dados.js"></script>
+<script>
+const CAPAS = {"tony": "capas/tony.jpg", "fnl": "capas/fnl.jpg", "suspeita": "capas/suspeita.jpg", "band": "capas/band.jpg", "forall": "capas/forall.jpg", "wire": "capas/wire.jpg", "expanse": "capas/expanse.jpg", "rena": "capas/rena.jpg", "spy": "capas/spy.jpg", "snatch": "capas/snatch.jpg", "kiss": "capas/kiss.jpg", "millennium": "capas/millennium.jpg", "windriver": "capas/windriver.jpg", "whn": "capas/whn.jpg"};
+// Os sentimentos (o que a pessoa quer sentir). A ordem aqui é a ordem dos botões.
+const SENTIMENTOS = [
+  { id: "pra-rir",            nome: "Pra rir" },
+  { id: "pra-ficar-feliz",    nome: "Pra ficar feliz" },
+  { id: "beira-do-sofa",      nome: "Beira do sofá" },
+  { id: "pra-se-emocionar",   nome: "Pra se emocionar" },
+  { id: "pra-se-apegar",      nome: "Pra se apegar" },
+  { id: "pra-se-envolver",    nome: "Pra se envolver" },
+  { id: "pra-sair-chocado",   nome: "Pra sair chocado" },
+  { id: "pra-pegar-no-sono",  nome: "Pra pegar no sono" }
+];
+const TIPOS = { filme: "Movie", serie: "Série", minisserie: "Minissérie" };
+const SELO = "marca/selo_lobine.svg";
+const MOSTRAR_SELO = false;
+const CAT = window.CATALOGO || { titulos: [] };
+const TITULOS = CAT.titulos;
+const PERFIL = "https://www.instagram.com/quemovie/";
+TITULOS.forEach((t, i) => { t.n = TITULOS.length - i; });
+
+const ondeTxt = t => (t.onde && t.onde.length) ? t.onde.join(", ") : "";
+const LOGOS = {"hbo": "marca/streaming/hbo.png", "prime": "marca/streaming/prime.png", "netflix": "marca/streaming/netflix.png", "appletv": "marca/streaming/appletv.svg"};
+const LOGO_DE = { "HBO Max": "hbo", "Max": "hbo", "HBO Max Amazon Channel": "hbo", "Prime Video": "prime", "Amazon Prime Video": "prime", "Netflix": "netflix", "Apple TV+": "appletv", "Apple TV": "appletv" };
+function ondeEl(t) {
+  const box = el("div", "onde");
+  const lista = t.onde || [];
+  if (!lista.length) { box.append(el("span", "aviso", t.so_aluguel ? "Só pra alugar ou comprar" : "Em nenhum streaming, bronca grande!")); return box; }
+  for (const nome of lista) {
+    const k = LOGO_DE[nome];
+    if (k && LOGOS[k]) { const img = el("img", k); img.src = LOGOS[k]; img.alt = nome; box.append(img); }
+    else box.append(el("span", nome === "Nos cinemas" ? "aviso" : null, nome));
+  }
+  return box;
+}
+const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
+const estado = { q: "", tipo: "", sent: "", selo: false };
+const sentsDe = t => (t.sentimentos || []).map(id => (SENTIMENTOS.find(s => s.id === id) || {}).nome).filter(Boolean);
+
+const $q = document.getElementById("q"), $limpar = document.getElementById("limpar");
+const $sents = document.getElementById("sents"), $grade = document.getElementById("grade");
+const $titulo = document.getElementById("titulo"), $selo = document.getElementById("selo");
+
+// Passa por tipo e selo (os filtros de baixo); o sentimento é contado em cima disso.
+const passaBase = t => (!estado.tipo || t.tipo === estado.tipo) && (!estado.selo || t.selo);
+
+function botoes() {
+  $sents.textContent = "";
+  for (const s of SENTIMENTOS) {
+    const n = TITULOS.filter(t => passaBase(t) && (t.sentimentos || []).includes(s.id)).length;
+    if (!n && estado.sent !== s.id) continue;
+    const b = el("button", "sent", s.nome);
+    b.type = "button";
+    b.setAttribute("aria-pressed", String(estado.sent === s.id));
+    b.append(el("span", null, String(n)));
+    // tocar de novo no mesmo sentimento desliga o filtro
+    b.addEventListener("click", () => { location.hash = estado.sent === s.id ? "" : s.id; if (estado.sent === s.id) aplicar(""); });
+    $sents.append(b);
+  }
+}
+
+function capa(t) {
+  const box = el("div", "cover");
+  if (t.capa && CAPAS[t.capa]) {
+    const img = el("img"); img.src = CAPAS[t.capa]; img.alt = ""; img.loading = "lazy"; box.append(img);
+  } else {
+    const ph = el("div", "ph c" + (t.n % 3));
+    ph.append(el("span", "tag", (TIPOS[t.tipo] || "").toUpperCase()));
+    ph.append(el("div", "t", t.curto || t.titulo));
+    box.append(ph);
+  }
+  // Selo Lobine desligado por enquanto (12/11). Pra religar: MOSTRAR_SELO = true e voltar o botão no HTML.
+  if (MOSTRAR_SELO && t.selo) { const s = el("img", "selo-capa"); s.src = SELO; s.alt = "Selo Lobine de melhor do mundo"; box.append(s); }
+  return box;
+}
+
+function render() {
+  const q = norm(estado.q.trim());
+  const lista = TITULOS.filter(t => {
+    if (!passaBase(t)) return false;
+    if (estado.sent && !(t.sentimentos || []).includes(estado.sent)) return false;
+    if (!q) return true;
+    const extra = [TIPOS[t.tipo], t.tipo === "filme" ? "filme" : "serie", MOSTRAR_SELO && t.selo ? "selo lobine melhor do mundo" : ""];
+    return norm([t.titulo, t.original, ondeTxt(t), t.ano, ...sentsDe(t), ...extra].join(" ")).includes(q);
+  });
+  const sent = SENTIMENTOS.find(s => s.id === estado.sent);
+  const tipoNome = { filme: "Movies", serie: "Séries", minisserie: "Minisséries" }[estado.tipo];
+  $titulo.textContent = q ? "“" + estado.q.trim() + "”" : sent ? sent.nome : estado.selo ? "Selo Lobine" : tipoNome || "Tudo";
+  $grade.textContent = "";
+  if (!lista.length) {
+    const v = el("li", "vazio");
+    v.append(el("b", null, "Ainda não indiquei esse."));
+    const p = el("span", null, "Me pede no direct que eu vejo e conto o que achei. ");
+    const a = el("a", null, "Mandar mensagem"); a.href = "https://ig.me/m/quemovie"; p.append(a);
+    v.append(p); $grade.append(v); return;
+  }
+  for (const t of lista) {
+    const li = el("li", "item"), a = el("a");
+    a.href = t.link || PERFIL;
+    a.setAttribute("aria-label", t.titulo + (t.link ? ", ver o vídeo no Instagram" : ", ver no perfil do Instagram"));
+    a.append(capa(t));
+    const cap = el("div", "cap");
+    // nome do título em destaque (laranja, letra condensada); sentimentos embaixo, discretos
+    cap.append(el("span", "titulo-t", t.titulo));
+    cap.append(el("span", "sents-n", sentsDe(t).join(" / ")));
+    cap.append(ondeEl(t));
+    a.append(cap); li.append(a); $grade.append(li);
+  }
+}
+
+function aplicar(id) {
+  estado.sent = SENTIMENTOS.some(s => s.id === id) ? id : "";
+  botoes(); render();
+}
+
+$q.addEventListener("input", () => { estado.q = $q.value; $limpar.hidden = !$q.value; render(); });
+$limpar.addEventListener("click", () => { $q.value = ""; estado.q = ""; $limpar.hidden = true; render(); $q.focus(); });
+document.querySelectorAll(".tipo button").forEach(b => b.addEventListener("click", () => {
+  estado.tipo = b.dataset.tipo;
+  document.querySelectorAll(".tipo button").forEach(x => x.setAttribute("aria-pressed", String(x === b)));
+  botoes(); render();
+}));
+if ($selo) $selo.addEventListener("click", () => {
+  estado.selo = !estado.selo; $selo.setAttribute("aria-pressed", String(estado.selo));
+  botoes(); render();
+});
+// Crédito à JustWatch: exigido pelo TMDB quando o "onde ver" vem da API.
+if (CAT.fonte && CAT.atualizado) document.getElementById("fonte").hidden = false;
+window.addEventListener("hashchange", () => aplicar(location.hash.slice(1)));
+aplicar(location.hash.slice(1));
+</script>
+</body>
+</html>
