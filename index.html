@@ -62,6 +62,9 @@ a { color: inherit; }
 .sent[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #12100e; }
 .sent span { font-size: 11px; vertical-align: super; margin-left: 3px; color: var(--orange); letter-spacing: 0; }
 .sent[aria-pressed="true"] span { color: #12100e; }
+.sents .quebra { flex-basis: 100%; height: 0; }
+.sent.menor { font-size: 12.5px; padding: 6px 10px 7px; border-width: 1px; }
+.sent.menor span { font-size: 9.5px; }
 
 /* linha de baixo: tipo + selo */
 .linha { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 16px; padding-top: 4px; border-top: 1px solid var(--line); }
@@ -231,17 +234,23 @@ const passaBase = t => (!estado.tipo || t.tipo === estado.tipo) && (!estado.selo
 
 function botoes() {
   $sents.textContent = "";
-  for (const s of SENTIMENTOS) {
+  // Ordem pelo total de títulos no catálogo todo (não muda quando filtra Movie/Série).
+  // Os 4 maiores ficam em cima no tamanho normal; o resto vem embaixo, menor.
+  const total = s => TITULOS.filter(t => (t.sentimentos || []).includes(s.id)).length;
+  const ordem = SENTIMENTOS.map((s, i) => ({ s, i, tot: total(s) }))
+    .sort((a, b) => b.tot - a.tot || a.i - b.i);
+  ordem.forEach(({ s }, pos) => {
     const n = TITULOS.filter(t => passaBase(t) && (t.sentimentos || []).includes(s.id)).length;
-    if (!n && estado.sent !== s.id) continue;
-    const b = el("button", "sent", s.nome);
+    if (pos === 4) $sents.append(el("span", "quebra"));
+    if (!n && estado.sent !== s.id) return;
+    const b = el("button", pos < 4 ? "sent" : "sent menor", s.nome);
     b.type = "button";
     b.setAttribute("aria-pressed", String(estado.sent === s.id));
     b.append(el("span", null, String(n)));
     // tocar de novo no mesmo sentimento desliga o filtro
     b.addEventListener("click", () => { location.hash = estado.sent === s.id ? "" : s.id; if (estado.sent === s.id) aplicar(""); });
     $sents.append(b);
-  }
+  });
 }
 
 function capa(t) {
