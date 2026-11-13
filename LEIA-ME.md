@@ -27,6 +27,6 @@ titulo, ano, data, link do Reel, capa (cena do filme, 600×800, em `capas/`), se
 Depois rodar a rotina de streaming.
 
 Sentimentos (vários por título): `pra-rir`, `pra-ficar-feliz`, `beira-do-sofa`, `pra-se-emocionar`,
-`pra-se-apegar`, `pra-se-envolver`, `pra-sair-chocado`, `pra-pegar-no-sono`.
+`pra-se-apegar`, `pra-se-empolgar`, `pra-ficar-pensando`, `pra-sair-chocado`, `pra-pegar-no-sono`.
 
 Selo Lobine de melhor do mundo (`"selo": true`): por enquanto só The Wire e Band of Brothers. Desenho em `marca/selo_lobine.svg`.

@@ -52,7 +52,7 @@ a { color: inherit; }
 .sub { margin: -10px 0 0; color: var(--muted); font-size: 15px; }
 
 /* sentimentos: botões grandes, fáceis de tocar */
-.sents { display: flex; flex-wrap: wrap; gap: 7px 6px; }
+.sents { display: flex; flex-wrap: wrap; gap: 7px 6px; min-width: 0; }
 .sent {
   background: transparent; color: var(--ink); cursor: pointer;
   border: 1.5px solid var(--line); border-radius: 999px; padding: 8px 12px 9px;
@@ -62,7 +62,10 @@ a { color: inherit; }
 .sent[aria-pressed="true"] { background: var(--orange); border-color: var(--orange); color: #12100e; }
 .sent span { font-size: 11px; vertical-align: super; margin-left: 3px; color: var(--orange); letter-spacing: 0; }
 .sent[aria-pressed="true"] span { color: #12100e; }
-.sents .quebra { flex-basis: 100%; height: 0; }
+.sents .topo { flex-basis: 100%; min-width: 0; display: flex; flex-wrap: nowrap; gap: 6px; }
+.sents .topo .sent { white-space: nowrap; flex-shrink: 0; }
+.sent span { font-size: .71em; }
+.sent.zero { opacity: .3; cursor: default; }
 .sent.menor { font-size: 12.5px; padding: 6px 10px 7px; border-width: 1px; }
 .sent.menor span { font-size: 9.5px; }
 
@@ -194,7 +197,8 @@ const SENTIMENTOS = [
   { id: "beira-do-sofa",      nome: "Beira do sofá" },
   { id: "pra-se-emocionar",   nome: "Pra se emocionar" },
   { id: "pra-se-apegar",      nome: "Pra se apegar" },
-  { id: "pra-se-envolver",    nome: "Pra se envolver" },
+  { id: "pra-se-empolgar",    nome: "Pra se empolgar" },
+  { id: "pra-ficar-pensando", nome: "Pra ficar pensando" },
   { id: "pra-sair-chocado",   nome: "Pra sair chocado" },
   { id: "pra-pegar-no-sono",  nome: "Pra pegar no sono" }
 ];
@@ -222,7 +226,7 @@ function ondeEl(t) {
 }
 const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 const el = (tag, cls, txt) => { const e = document.createElement(tag); if (cls) e.className = cls; if (txt != null) e.textContent = txt; return e; };
-const estado = { q: "", tipo: "", sent: "", selo: false };
+const estado = { q: "", tipo: "", sents: [], selo: false }; // sents: sentimentos marcados (cruzados: o título precisa ter todos)
 const sentsDe = t => (t.sentimentos || []).map(id => (SENTIMENTOS.find(s => s.id === id) || {}).nome).filter(Boolean);
 
 const $q = document.getElementById("q"), $limpar = document.getElementById("limpar");
@@ -231,26 +235,52 @@ const $titulo = document.getElementById("titulo"), $selo = document.getElementBy
 
 // Passa por tipo e selo (os filtros de baixo); o sentimento é contado em cima disso.
 const passaBase = t => (!estado.tipo || t.tipo === estado.tipo) && (!estado.selo || t.selo);
+const temTodos = (t, ids) => ids.every(id => (t.sentimentos || []).includes(id));
+const irPara = ids => { location.hash = ids.join("+"); if (!ids.length) aplicar(""); };
+
+const NO_TOPO = 3;
+
+// Se a linha de cima não couber na tela, diminui a letra aos poucos (mesma proporção, sem quebrar).
+function caberTopo() {
+  const t = document.querySelector(".sents .topo");
+  if (!t) return;
+  let f = 15.5;
+  t.style.fontSize = "";
+  t.querySelectorAll(".sent").forEach(b => (b.style.fontSize = ""));
+  while (t.scrollWidth > t.clientWidth && f > 11) {
+    f -= 0.25;
+    t.querySelectorAll(".sent").forEach(b => (b.style.fontSize = f + "px"));
+  }
+}
+addEventListener("resize", caberTopo);
+document.fonts && document.fonts.ready.then(caberTopo);
 
 function botoes() {
   $sents.textContent = "";
   // Ordem pelo total de títulos no catálogo todo (não muda quando filtra Movie/Série).
-  // Os 4 maiores ficam em cima no tamanho normal; o resto vem embaixo, menor.
+  // Os NO_TOPO maiores ficam numa linha em cima, no tamanho normal; o resto vem embaixo, menor.
   const total = s => TITULOS.filter(t => (t.sentimentos || []).includes(s.id)).length;
   const ordem = SENTIMENTOS.map((s, i) => ({ s, i, tot: total(s) }))
     .sort((a, b) => b.tot - a.tot || a.i - b.i);
+  const $topo = el("div", "topo");
+  $sents.append($topo);
   ordem.forEach(({ s }, pos) => {
-    const n = TITULOS.filter(t => passaBase(t) && (t.sentimentos || []).includes(s.id)).length;
-    if (pos === 4) $sents.append(el("span", "quebra"));
-    if (!n && estado.sent !== s.id) return;
-    const b = el("button", pos < 4 ? "sent" : "sent menor", s.nome);
+    const marcado = estado.sents.includes(s.id);
+    // número = quantos títulos sobram se esse sentimento também for marcado (cruzando com os já marcados)
+    const ids = marcado ? estado.sents : [...estado.sents, s.id];
+    const n = TITULOS.filter(t => passaBase(t) && temTodos(t, ids)).length;
+    const topo = pos < NO_TOPO;
+    // ninguém some (pra nada pular de lugar); sem resultado fica apagado e não dá pra tocar
+    const b = el("button", (topo ? "sent" : "sent menor") + (n || marcado ? "" : " zero"), s.nome);
     b.type = "button";
-    b.setAttribute("aria-pressed", String(estado.sent === s.id));
+    b.disabled = !n && !marcado;
+    b.setAttribute("aria-pressed", String(marcado));
     b.append(el("span", null, String(n)));
-    // tocar de novo no mesmo sentimento desliga o filtro
-    b.addEventListener("click", () => { location.hash = estado.sent === s.id ? "" : s.id; if (estado.sent === s.id) aplicar(""); });
-    $sents.append(b);
+    // tocar marca; tocar de novo desmarca
+    b.addEventListener("click", () => irPara(marcado ? estado.sents.filter(x => x !== s.id) : [...estado.sents, s.id]));
+    (topo ? $topo : $sents).append(b);
   });
+  caberTopo();
 }
 
 function capa(t) {
@@ -272,12 +302,12 @@ function render() {
   const q = norm(estado.q.trim());
   const lista = TITULOS.filter(t => {
     if (!passaBase(t)) return false;
-    if (estado.sent && !(t.sentimentos || []).includes(estado.sent)) return false;
+    if (!temTodos(t, estado.sents)) return false;
     if (!q) return true;
     const extra = [TIPOS[t.tipo], t.tipo === "filme" ? "filme" : "serie", MOSTRAR_SELO && t.selo ? "selo lobine melhor do mundo" : ""];
     return norm([t.titulo, t.original, ondeTxt(t), t.ano, ...sentsDe(t), ...extra].join(" ")).includes(q);
   });
-  const sent = SENTIMENTOS.find(s => s.id === estado.sent);
+  const sent = estado.sents.length && { nome: estado.sents.map(id => SENTIMENTOS.find(s => s.id === id).nome).join(" + ") };
   const tipoNome = { filme: "Movies", serie: "Séries", minisserie: "Minisséries" }[estado.tipo];
   $titulo.textContent = q ? "“" + estado.q.trim() + "”" : sent ? sent.nome : estado.selo ? "Selo Lobine" : tipoNome || "Tudo";
   $grade.textContent = "";
@@ -302,8 +332,9 @@ function render() {
   }
 }
 
-function aplicar(id) {
-  estado.sent = SENTIMENTOS.some(s => s.id === id) ? id : "";
+function aplicar(hash) {
+  // o endereço guarda os marcados: quemovie.com.br/#beira-do-sofa+pra-se-apegar
+  estado.sents = decodeURIComponent(hash).split("+").filter(id => SENTIMENTOS.some(s => s.id === id));
   botoes(); render();
 }
 

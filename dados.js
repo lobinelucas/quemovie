@@ -37,7 +37,8 @@ window.CATALOGO = {
       "sentimentos": [
         "pra-pegar-no-sono",
         "pra-se-emocionar",
-        "pra-se-apegar"
+        "pra-se-apegar",
+        "pra-se-empolgar"
       ],
       "tmdb_id": 4278,
       "so_aluguel": false,
@@ -93,7 +94,8 @@ window.CATALOGO = {
       "link": "https://www.instagram.com/reel/DM05eFEOe7-/",
       "tmdb_id": 5236,
       "sentimentos": [
-        "pra-rir"
+        "pra-rir",
+        "pra-se-empolgar"
       ],
       "so_aluguel": false,
       "onde_link": "https://www.themoviedb.org/movie/5236-kiss-kiss-bang-bang/watch?locale=BR"
@@ -111,7 +113,8 @@ window.CATALOGO = {
       "tmdb_id": 1438,
       "sentimentos": [
         "pra-se-apegar",
-        "pra-se-envolver"
+        "pra-se-empolgar",
+        "pra-ficar-pensando"
       ],
       "selo": true,
       "so_aluguel": false,
@@ -131,7 +134,8 @@ window.CATALOGO = {
       "link": "https://www.instagram.com/reel/DMn0h5BO06t/",
       "tmdb_id": 107,
       "sentimentos": [
-        "pra-rir"
+        "pra-rir",
+        "pra-se-empolgar"
       ],
       "so_aluguel": false,
       "onde_link": "https://www.themoviedb.org/movie/107-snatch/watch?locale=BR"
@@ -221,7 +225,8 @@ window.CATALOGO = {
       "tmdb_id": 87917,
       "capa": "forall",
       "sentimentos": [
-        "pra-se-apegar"
+        "pra-se-apegar",
+        "pra-ficar-pensando"
       ],
       "so_aluguel": false,
       "onde_link": "https://www.themoviedb.org/tv/87917-for-all-mankind/watch?locale=BR"
