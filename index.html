@@ -163,6 +163,31 @@ footer img { height: 16px; width: auto; opacity: .9; margin-left: auto; }
 .fonte a { color: var(--muted); }
 footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--orange); text-underline-offset: 3px; }
 
+/* pergunta sempre numa linha só: a letra acompanha a largura da tela (máx. 40px) */
+.pergunta { white-space: nowrap; text-wrap: nowrap; font-size: min(40px, calc((100vw - 36px) / 9.8)); }
+
+/* celular: topo mais enxuto, pra primeira tela mostrar 2 capas e o começo da fileira de baixo */
+@media (max-width: 519px) {
+  body { padding-top: max(12px, env(safe-area-inset-top, 0px)); }
+  .wrap { gap: 9px; }
+  .top { padding-bottom: 9px; }
+  .logo { height: 34px; }
+  .sents { gap: 5px 5px; }
+  .sent { font-size: 14px; padding: 7px 11px 8px; }
+  .sent.menor { font-size: 10.5px; padding: 5px 8px 6px; }
+  .sent.menor span { font-size: 8.5px; margin-left: 2px; }
+  .linha { padding-top: 2px; }
+  .tipo button { font-size: 15px; padding: 3px 0; }
+  .tipo button[aria-pressed="true"] { text-underline-offset: 5px; }
+  .search input { font-size: 16px; padding-top: 6px; padding-bottom: 7px; }
+  .search .cursor { top: 6px; height: 20px; }
+  .clear { top: 2px; }
+  .shelf h1 { font-size: 30px; }
+  .grid { gap: 16px 12px; }
+  .item a { gap: 7px; }
+  .cap .sents-n { font-size: 11px; }
+}
+
 @media (min-width: 520px) {
   .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .shelf h1 { font-size: 60px; }
@@ -265,9 +290,10 @@ const NO_TOPO = 3;
 function caberTopo() {
   const t = document.querySelector(".sents .topo");
   if (!t) return;
-  let f = 15.5;
   t.style.fontSize = "";
   t.querySelectorAll(".sent").forEach(b => (b.style.fontSize = ""));
+  const primeiro = t.querySelector(".sent");
+  let f = primeiro ? parseFloat(getComputedStyle(primeiro).fontSize) : 15.5; // tamanho do CSS (menor no celular)
   while (t.scrollWidth > t.clientWidth && f > 11) {
     f -= 0.25;
     t.querySelectorAll(".sent").forEach(b => (b.style.fontSize = f + "px"));
