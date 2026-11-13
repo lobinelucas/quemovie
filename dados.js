@@ -31,7 +31,7 @@ window.CATALOGO = {
         "Amazon Prime Video"
       ],
       "data": "2026-11-11",
-      "link": "",
+      "link": "https://www.instagram.com/reel/DfneIUHSL56/",
       "capa": "fnl",
       "original": "Friday Night Lights",
       "sentimentos": [

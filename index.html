@@ -88,6 +88,16 @@ a { color: inherit; }
 }
 .search input::placeholder { color: #6a6256; }
 .search input:focus { outline: none; border-bottom-color: var(--orange); }
+.search input { padding-left: 12px; caret-color: var(--orange); }
+/* cursor piscando antes do texto de exemplo, pra mostrar que dá pra digitar;
+   some quando a pessoa toca (aí aparece o cursor de verdade) ou quando tem texto */
+.search .cursor {
+  position: absolute; left: 0; top: 11px; width: 2.5px; height: 23px; border-radius: 1px;
+  background: var(--orange); pointer-events: none; animation: piscar 1.06s steps(1) infinite;
+}
+.search input:focus ~ .cursor, .search input:not(:placeholder-shown) ~ .cursor { display: none; }
+@keyframes piscar { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .search .cursor { animation: none; } }
 .clear { position: absolute; right: 0; top: 6px; background: none; border: 0; color: var(--muted); font: 600 22px/1 var(--body); padding: 6px; cursor: pointer; }
 .clear[hidden] { display: none; }
 
@@ -100,8 +110,9 @@ a { color: inherit; }
 .tipo button[aria-pressed="true"] { color: var(--ink); text-decoration: underline; text-decoration-color: var(--orange); text-decoration-thickness: 3px; text-underline-offset: 6px; }
 
 /* letreiro da prateleira */
-.shelf { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; padding-top: 0; }
+.shelf { display: flex; align-items: flex-end; justify-content: flex-start; gap: 12px; padding-top: 0; }
 .shelf h1 { margin: 0; font: 850 40px/.9 var(--display); font-stretch: 64%; text-transform: uppercase; color: var(--orange); text-wrap: balance; }
+.shelf p.dica { margin: 0 0 1px; white-space: nowrap; text-align: left; font-size: 8px; line-height: 1.25; letter-spacing: .07em; color: var(--ink); opacity: .6; }
 .shelf p { margin: 0 0 4px; color: var(--muted); font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; font-variant-numeric: tabular-nums; }
 
 /* grade de capas */
@@ -110,6 +121,15 @@ a { color: inherit; }
 .cover { position: relative; container-type: inline-size; aspect-ratio: 3 / 4; overflow: hidden; background: var(--surface); }
 .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .item a:active .cover { transform: translateY(1px); }
+.cover .play {
+  position: absolute; left: 8px; bottom: 8px; width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(18,16,14,.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  border: 1.5px solid rgba(255,255,255,.75); pointer-events: none;
+}
+.cover .play::after {
+  content: ""; position: absolute; left: 11px; top: 8px;
+  border-style: solid; border-width: 6.5px 0 6.5px 10px; border-color: transparent transparent transparent #fff;
+}
 /* capa provisória no estilo das capas antigas: cor chapada + título condensado */
 .ph { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 10px 11px 12px; background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20width%3D%22160%22%20height%3D%22160%22%3E%3Cfilter%20id%3D%22n%22%3E%3CfeTurbulence%20type%3D%22fractalNoise%22%20baseFrequency%3D%22.9%22%20numOctaves%3D%222%22%20stitchTiles%3D%22stitch%22/%3E%3CfeColorMatrix%20values%3D%220%200%200%200%201%20%200%200%200%200%201%20%200%200%200%200%201%20%200%200%200%20.06%200%22/%3E%3C/filter%3E%3Crect%20width%3D%22100%25%22%20height%3D%22100%25%22%20filter%3D%22url%28%23n%29%22/%3E%3C/svg%3E"); }
 .ph.c0 { background-color: var(--orange); color: #12100e; }
@@ -172,11 +192,12 @@ footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--ora
   <div class="search">
     <label for="q">Buscar</label>
     <input id="q" type="search" placeholder="Busca por nome ou streaming" autocomplete="off" enterkeyhint="search">
+    <span class="cursor" aria-hidden="true"></span>
     <button class="clear" id="limpar" type="button" aria-label="Limpar busca" hidden>×</button>
   </div>
 
   <section aria-live="polite">
-    <div class="shelf"><h1 id="titulo">Tudo</h1></div>
+    <div class="shelf"><h1 id="titulo">Tudo</h1><p class="dica">Clique na imagem<br>para que eu te convença</p></div>
   </section>
 
   <ul class="grid" id="grade"></ul>
@@ -294,6 +315,8 @@ function capa(t) {
     box.append(ph);
   }
   // Selo Lobine desligado por enquanto (12/11). Pra religar: MOSTRAR_SELO = true e voltar o botão no HTML.
+  // ▶ no canto: sinal de "tem vídeo aqui" (a capa leva pro Reel)
+  if (t.link) { const pl = el("span", "play"); pl.setAttribute("aria-hidden", "true"); box.append(pl); }
   if (MOSTRAR_SELO && t.selo) { const s = el("img", "selo-capa"); s.src = SELO; s.alt = "Selo Lobine de melhor do mundo"; box.append(s); }
   return box;
 }
@@ -307,9 +330,9 @@ function render() {
     const extra = [TIPOS[t.tipo], t.tipo === "filme" ? "filme" : "serie", MOSTRAR_SELO && t.selo ? "selo lobine melhor do mundo" : ""];
     return norm([t.titulo, t.original, ondeTxt(t), t.ano, ...sentsDe(t), ...extra].join(" ")).includes(q);
   });
-  const sent = estado.sents.length && { nome: estado.sents.map(id => SENTIMENTOS.find(s => s.id === id).nome).join(" + ") };
+  // Título grande = sempre o tipo (Tudo / Movies / Séries / Minisséries).
   const tipoNome = { filme: "Movies", serie: "Séries", minisserie: "Minisséries" }[estado.tipo];
-  $titulo.textContent = q ? "“" + estado.q.trim() + "”" : sent ? sent.nome : estado.selo ? "Selo Lobine" : tipoNome || "Tudo";
+  $titulo.textContent = tipoNome || "Tudo";
   $grade.textContent = "";
   if (!lista.length) {
     const v = el("li", "vazio");
@@ -352,6 +375,8 @@ if ($selo) $selo.addEventListener("click", () => {
 // Crédito à JustWatch: exigido pelo TMDB quando o "onde ver" vem da API.
 if (CAT.fonte && CAT.atualizado) document.getElementById("fonte").hidden = false;
 window.addEventListener("hashchange", () => aplicar(location.hash.slice(1)));
+const tipoInicial = new URLSearchParams(location.search).get("tipo");
+if (tipoInicial) { const b = document.querySelector('.tipo button[data-tipo="' + tipoInicial + '"]'); if (b) b.click(); }
 aplicar(location.hash.slice(1));
 </script>
 </body>
