@@ -20,7 +20,11 @@ window.CATALOGO = {
       ],
       "tmdb_id": 9693,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/movie/9693-children-of-men/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/movie/9693-children-of-men/watch?locale=BR",
+      "aluguel": [
+        "Apple TV Store",
+        "Amazon Video"
+      ]
     },
     {
       "tipo": "filme",
@@ -40,7 +44,8 @@ window.CATALOGO = {
       ],
       "tmdb_id": 891621,
       "so_aluguel": false,
-      "onde_link": ""
+      "onde_link": "",
+      "aluguel": []
     },
     {
       "tipo": "serie",
@@ -61,7 +66,8 @@ window.CATALOGO = {
       ],
       "tmdb_id": 4278,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/4278-friday-night-lights/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/4278-friday-night-lights/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "filme",
@@ -79,7 +85,8 @@ window.CATALOGO = {
         "pra-ficar-feliz"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/movie/1329016-tony/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/movie/1329016-tony/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "filme",
@@ -99,7 +106,11 @@ window.CATALOGO = {
         "pra-sair-chocado"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/movie/65754-the-girl-with-the-dragon-tattoo/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/movie/65754-the-girl-with-the-dragon-tattoo/watch?locale=BR",
+      "aluguel": [
+        "Apple TV Store",
+        "Amazon Video"
+      ]
     },
     {
       "tipo": "filme",
@@ -117,7 +128,11 @@ window.CATALOGO = {
         "pra-se-empolgar"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/movie/5236-kiss-kiss-bang-bang/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/movie/5236-kiss-kiss-bang-bang/watch?locale=BR",
+      "aluguel": [
+        "Apple TV Store",
+        "Amazon Video"
+      ]
     },
     {
       "tipo": "serie",
@@ -137,7 +152,8 @@ window.CATALOGO = {
       ],
       "selo": true,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/1438-the-wire/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/1438-the-wire/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "filme",
@@ -157,7 +173,11 @@ window.CATALOGO = {
         "pra-se-empolgar"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/movie/107-snatch/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/movie/107-snatch/watch?locale=BR",
+      "aluguel": [
+        "Apple TV Store",
+        "Amazon Video"
+      ]
     },
     {
       "tipo": "minisserie",
@@ -175,7 +195,8 @@ window.CATALOGO = {
       ],
       "tmdb_id": 91725,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/91725-the-spy/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/91725-the-spy/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "serie",
@@ -193,7 +214,8 @@ window.CATALOGO = {
         "beira-do-sofa"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/63639-the-expanse/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/63639-the-expanse/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "minisserie",
@@ -212,7 +234,8 @@ window.CATALOGO = {
       ],
       "selo": true,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/4613-band-of-brothers/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/4613-band-of-brothers/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "serie",
@@ -230,7 +253,8 @@ window.CATALOGO = {
       ],
       "tmdb_id": 156933,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/156933-presumed-innocent/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/156933-presumed-innocent/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "serie",
@@ -248,7 +272,8 @@ window.CATALOGO = {
         "pra-ficar-pensando"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/87917-for-all-mankind/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/87917-for-all-mankind/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "filme",
@@ -266,7 +291,8 @@ window.CATALOGO = {
         "beira-do-sofa"
       ],
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/movie/395834-wind-river/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/movie/395834-wind-river/watch?locale=BR",
+      "aluguel": []
     },
     {
       "tipo": "minisserie",
@@ -284,7 +310,8 @@ window.CATALOGO = {
       ],
       "tmdb_id": 241259,
       "so_aluguel": false,
-      "onde_link": "https://www.themoviedb.org/tv/241259-baby-reindeer/watch?locale=BR"
+      "onde_link": "https://www.themoviedb.org/tv/241259-baby-reindeer/watch?locale=BR",
+      "aluguel": []
     }
   ]
 };

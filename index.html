@@ -148,6 +148,12 @@ a { color: inherit; }
 .cap .onde img.prime { height: 16px; }
 .cap .onde img.netflix { height: 12.5px; }
 .cap .onde img.appletv { height: 15px; }
+.cap .onde img.mubi { height: 13px; }
+/* streaming e aluguel em fileiras separadas, com rótulo pequeno na frente */
+.cap .onde.duas { flex-direction: column; align-items: flex-start; gap: 6px; }
+.cap .onde.duas { gap: 9px; }
+.cap .onde .linha { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 12px; }
+.cap .onde span.rot { flex-basis: 100%; font-size: 10px; letter-spacing: .1em; opacity: 1; color: var(--orange); }
 .cap .onde span:not(.aviso) { opacity: .5; }
 .cap .onde span { font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
 .cap .onde span.aviso { font-size: 13px; line-height: 1.15; color: var(--yellow); }
@@ -157,6 +163,8 @@ a { color: inherit; }
 
 footer { border-top: 2px solid var(--ink); padding-top: 18px; display: flex; align-items: center; justify-content: space-between; gap: 16px; color: var(--muted); font-size: 14px; }
 footer img { height: 16px; width: auto; opacity: .9; margin-left: auto; }
+footer .legenda-onde { margin: 0; font-size: 13px; line-height: 1.45; }
+footer .legenda-onde b { font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .08em; text-transform: uppercase; color: var(--orange); }
 /* crédito exigido pelo TMDB, o mais discreto possível */
 .credito { margin: -8px 0 0; text-align: left; font-size: 10px; color: var(--muted); opacity: .45; }
 .credito a { color: inherit; text-decoration: none; }
@@ -233,12 +241,14 @@ footer a { color: var(--ink); font-weight: 600; text-decoration-color: var(--ora
   <ul class="grid" id="grade"></ul>
 
   <footer>
+    <p class="legenda-onde"><b>Streaming</b>: já vem na assinatura, é só dar o play.<br><b>Pra alugar</b>: paga só esse filme, sem assinar nada (normalmente fica liberado por 48h).</p>
     <img src="marca/simbolo.png" alt="">
   </footer>
   <p class="credito" id="fonte" hidden>Dados: <a href="https://www.justwatch.com/br">JustWatch</a></p>
 </div>
 
-<script src="dados.js"></script>
+<!-- o catálogo vem sempre fresco: o "?v=" muda a cada visita, então o celular não reaproveita uma lista velha (o GitHub Pages guarda arquivos por 10 min) -->
+<script>document.write('<script src="dados.js?v=' + Date.now() + '"><\/script>');</script>
 <script>
 const CAPAS = {"tony": "capas/tony.jpg", "fnl": "capas/fnl.jpg", "suspeita": "capas/suspeita.jpg", "band": "capas/band.jpg", "forall": "capas/forall.jpg", "wire": "capas/wire.jpg", "expanse": "capas/expanse.jpg", "rena": "capas/rena.jpg", "spy": "capas/spy.jpg", "snatch": "capas/snatch.jpg", "kiss": "capas/kiss.jpg", "millennium": "capas/millennium.jpg", "windriver": "capas/windriver.jpg", "whn": "capas/whn.jpg", "children": "capas/children.jpg"};
 // Os sentimentos (o que a pessoa quer sentir). A ordem aqui é a ordem dos botões.
@@ -262,17 +272,35 @@ const PERFIL = "https://www.instagram.com/quemovie/";
 TITULOS.forEach((t, i) => { t.n = TITULOS.length - i; });
 
 const ondeTxt = t => (t.onde && t.onde.length) ? t.onde.join(", ") : "";
-const LOGOS = {"hbo": "marca/streaming/hbo.png", "prime": "marca/streaming/prime.png", "netflix": "marca/streaming/netflix.png", "appletv": "marca/streaming/appletv.svg"};
-const LOGO_DE = { "HBO Max": "hbo", "Max": "hbo", "HBO Max Amazon Channel": "hbo", "Prime Video": "prime", "Amazon Prime Video": "prime", "Netflix": "netflix", "Apple TV+": "appletv", "Apple TV": "appletv" };
-function ondeEl(t) {
-  const box = el("div", "onde");
-  const lista = t.onde || [];
-  if (!lista.length) { box.append(el("span", "aviso", t.so_aluguel ? "Só pra alugar ou comprar" : "Em nenhum streaming, bronca grande!")); return box; }
+const LOGOS = {"hbo": "marca/streaming/hbo.png", "prime": "marca/streaming/prime.png", "netflix": "marca/streaming/netflix.png", "appletv": "marca/streaming/appletv.svg", "mubi": "marca/streaming/mubi.png"};
+const LOGO_DE = { "HBO Max": "hbo", "Max": "hbo", "HBO Max Amazon Channel": "hbo", "Prime Video": "prime", "Amazon Prime Video": "prime", "Amazon Video": "prime", "Netflix": "netflix", "Apple TV+": "appletv", "Apple TV": "appletv", "Apple TV Store": "appletv", "MUBI": "mubi" };
+const NOME_CURTO = { "Claro video": "Claro" };
+// uma fileira de logos (ou nomes, quando não tem logo)
+function logos(lista) {
+  const f = document.createDocumentFragment();
   for (const nome of lista) {
     const k = LOGO_DE[nome];
-    if (k && LOGOS[k]) { const img = el("img", k); img.src = LOGOS[k]; img.alt = nome; box.append(img); }
-    else box.append(el("span", nome === "Nos cinemas" ? "aviso" : null, nome));
+    if (k && LOGOS[k]) { const img = el("img", k); img.src = LOGOS[k]; img.alt = nome; f.append(img); }
+    else f.append(el("span", nome === "Nos cinemas" ? "aviso" : null, NOME_CURTO[nome] || nome));
   }
+  return f;
+}
+function ondeEl(t) {
+  const box = el("div", "onde");
+  const lista = t.onde || [], alugar = t.aluguel || [];
+  // "Streaming" = já vem na assinatura; "Pra alugar" = paga só esse título (pedido do Lucas, 15/11/2026)
+  if (alugar.length && lista.length && lista[0] !== "Nos cinemas") {
+    box.classList.add("duas");
+    const l1 = el("div", "linha"); l1.append(el("span", "rot", "Streaming"), logos(lista));
+    const l2 = el("div", "linha"); l2.append(el("span", "rot", "Pra alugar"), logos(alugar));
+    box.append(l1, l2);
+    return box;
+  }
+  if (!lista.length) {
+    if (alugar.length) { const l = el("div", "linha"); l.append(el("span", "rot", "Pra alugar"), logos(alugar)); box.classList.add("duas"); box.append(l); return box; }
+    box.append(el("span", "aviso", t.so_aluguel ? "Só pra alugar ou comprar" : "Em nenhum streaming, bronca grande!")); return box;
+  }
+  box.append(logos(lista));
   return box;
 }
 const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();

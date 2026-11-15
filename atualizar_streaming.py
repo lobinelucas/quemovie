@@ -127,6 +127,9 @@ def main():
         elif t.get("nos_cinemas"):
             t["onde"] = ["Nos cinemas"]
         t["so_aluguel"] = not t["onde"] and bool(br.get("rent") or br.get("buy"))
+        # onde dá pra alugar (paga só aquele título, sem assinatura) — pedido do Lucas em 15/11/2026
+        # só Apple TV e Prime Video; Claro e qualquer outra loja ficam de fora (Lucas, 15/11/2026)
+        t["aluguel"] = [n for n in nomes(br.get("rent")) if n in ("Apple TV Store", "Apple TV", "Amazon Video", "Prime Video")]
         t["onde_link"] = br.get("link", "")
         mostra = ", ".join(t["onde"]) or ("só aluguel" if t["so_aluguel"] else "sem streaming no BR")
         print(f"{t['titulo'][:32]:32} {t['tmdb_id']:>8}  {mostra}   (TMDB: {nome_tmdb})")
