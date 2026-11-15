@@ -152,7 +152,7 @@ a { color: inherit; }
 /* streaming e aluguel em fileiras separadas, com rótulo pequeno na frente */
 .cap .onde.duas { flex-direction: column; align-items: flex-start; gap: 6px; }
 .cap .onde.duas { gap: 9px; }
-.cap .onde .linha { display: flex; flex-wrap: wrap; align-items: center; gap: 5px 12px; }
+.cap .onde .linha { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px 12px; }
 .cap .onde span.rot { flex-basis: 100%; font-size: 10px; letter-spacing: .1em; opacity: 1; color: var(--orange); }
 .cap .onde span:not(.aviso) { opacity: .5; }
 .cap .onde span { font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
@@ -273,7 +273,7 @@ TITULOS.forEach((t, i) => { t.n = TITULOS.length - i; });
 
 const ondeTxt = t => (t.onde && t.onde.length) ? t.onde.join(", ") : "";
 const LOGOS = {"hbo": "marca/streaming/hbo.png", "prime": "marca/streaming/prime.png", "netflix": "marca/streaming/netflix.png", "appletv": "marca/streaming/appletv.svg", "mubi": "marca/streaming/mubi.png"};
-const LOGO_DE = { "HBO Max": "hbo", "Max": "hbo", "HBO Max Amazon Channel": "hbo", "Prime Video": "prime", "Amazon Prime Video": "prime", "Amazon Video": "prime", "Netflix": "netflix", "Apple TV+": "appletv", "Apple TV": "appletv", "Apple TV Store": "appletv", "MUBI": "mubi" };
+const LOGO_DE = { "HBO Max": "hbo", "Max": "hbo", "HBO Max Amazon Channel": "hbo", "Prime Video": "prime", "Amazon Prime Video": "prime", "Amazon Video": "prime", "Netflix": "netflix", "Apple TV+": "appletv", "Apple TV": "appletv", "Apple TV Store": "appletv", "MUBI": "mubi", "Disney Plus": "disney", "Disney+": "disney" };
 const NOME_CURTO = { "Claro video": "Claro" };
 // uma fileira de logos (ou nomes, quando não tem logo)
 function logos(lista) {
@@ -285,22 +285,24 @@ function logos(lista) {
   }
   return f;
 }
+// Regras do Lucas (15/11/2026): todo card mostra "Streaming" com as logos; "Pra alugar" só aparece
+// quando o título NÃO está em nenhum dos principais (Netflix, Prime, Apple, Disney+ e HBO Max). Logos coladas à esquerda.
+const PRINCIPAIS = new Set(["netflix", "prime", "appletv", "disney", "hbo"]);
+const naPrincipal = lista => lista.some(n => PRINCIPAIS.has(LOGO_DE[n]));
+function linha(rotulo, lista) {
+  const l = el("div", "linha"); l.append(el("span", "rot", rotulo), logos(lista)); return l;
+}
 function ondeEl(t) {
   const box = el("div", "onde");
   const lista = t.onde || [], alugar = t.aluguel || [];
-  // "Streaming" = já vem na assinatura; "Pra alugar" = paga só esse título (pedido do Lucas, 15/11/2026)
-  if (alugar.length && lista.length && lista[0] !== "Nos cinemas") {
-    box.classList.add("duas");
-    const l1 = el("div", "linha"); l1.append(el("span", "rot", "Streaming"), logos(lista));
-    const l2 = el("div", "linha"); l2.append(el("span", "rot", "Pra alugar"), logos(alugar));
-    box.append(l1, l2);
-    return box;
+  if (lista[0] === "Nos cinemas") { box.append(logos(lista)); return box; }
+  box.classList.add("duas");
+  if (lista.length) box.append(linha("Streaming", lista));
+  if (alugar.length && !naPrincipal(lista)) box.append(linha("Pra alugar", alugar));
+  if (!box.children.length) {
+    box.classList.remove("duas");
+    box.append(el("span", "aviso", t.so_aluguel ? "Só pra alugar ou comprar" : "Em nenhum streaming, bronca grande!"));
   }
-  if (!lista.length) {
-    if (alugar.length) { const l = el("div", "linha"); l.append(el("span", "rot", "Pra alugar"), logos(alugar)); box.classList.add("duas"); box.append(l); return box; }
-    box.append(el("span", "aviso", t.so_aluguel ? "Só pra alugar ou comprar" : "Em nenhum streaming, bronca grande!")); return box;
-  }
-  box.append(logos(lista));
   return box;
 }
 const norm = s => (s || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
