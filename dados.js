@@ -5,6 +5,25 @@ window.CATALOGO = {
   "titulos": [
     {
       "tipo": "filme",
+      "titulo": "Filhos da Esperança",
+      "original": "Children of Men",
+      "ano": "2006",
+      "data": "2026-11-15",
+      "link": "https://www.instagram.com/p/DfxtgPiyNuV/",
+      "capa": "children",
+      "onde": [
+        "MUBI"
+      ],
+      "sentimentos": [
+        "beira-do-sofa",
+        "pra-sair-chocado"
+      ],
+      "tmdb_id": 9693,
+      "so_aluguel": false,
+      "onde_link": "https://www.themoviedb.org/movie/9693-children-of-men/watch?locale=BR"
+    },
+    {
+      "tipo": "filme",
       "titulo": "Wild Horse Nine",
       "original": "Cavalo Selvagem Nove",
       "ano": "2026",
