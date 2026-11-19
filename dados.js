@@ -17,7 +17,7 @@ window.CATALOGO = {
       "sentimentos": [
         "beira-do-sofa",
         "pra-se-empolgar",
-        "pra-acelerar"
+        "acelerado"
       ],
       "tmdb_id": 429200,
       "so_aluguel": false,
