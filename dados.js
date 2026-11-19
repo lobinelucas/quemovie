@@ -5,6 +5,27 @@ window.CATALOGO = {
   "titulos": [
     {
       "tipo": "filme",
+      "titulo": "Bom Comportamento",
+      "original": "Good Time",
+      "ano": "2017",
+      "data": "2026-11-18",
+      "link": "https://www.instagram.com/p/Df4yV8oSMW2/",
+      "capa": "goodtime",
+      "onde": [
+        "Amazon Prime Video"
+      ],
+      "sentimentos": [
+        "beira-do-sofa",
+        "pra-se-empolgar",
+        "pra-acelerar"
+      ],
+      "tmdb_id": 429200,
+      "so_aluguel": false,
+      "aluguel": [],
+      "onde_link": "https://www.themoviedb.org/movie/429200-good-time/watch?locale=BR"
+    },
+    {
+      "tipo": "filme",
       "titulo": "Filhos da Esperança",
       "original": "Children of Men",
       "ano": "2006",
