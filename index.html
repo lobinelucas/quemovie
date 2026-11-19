@@ -127,6 +127,12 @@ a { color: inherit; }
   background: rgba(18,16,14,.55); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
   border: 1.5px solid rgba(255,255,255,.75); pointer-events: none;
 }
+/* tipo do título (Movie/Série/Minissérie), só na aba Tudo (Lucas, 19/11/2026) */
+.cover .tipo {
+  position: absolute; left: 8px; top: 8px; padding: 5px 8px 4px; border-radius: 999px;
+  background: rgba(18,16,14,.6); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
+  font: 700 11px/1 var(--display); font-stretch: 75%; letter-spacing: .1em; text-transform: uppercase; color: #fff; pointer-events: none;
+}
 .cover .play::after {
   content: ""; position: absolute; left: 11px; top: 8px;
   border-style: solid; border-width: 6.5px 0 6.5px 10px; border-color: transparent transparent transparent #fff;
@@ -149,10 +155,10 @@ a { color: inherit; }
 .cap .onde img.netflix { height: 12.5px; }
 .cap .onde img.appletv { height: 15px; }
 .cap .onde img.mubi { height: 13px; }
-/* streaming e aluguel em fileiras separadas, com rótulo pequeno na frente */
-.cap .onde.duas { flex-direction: column; align-items: flex-start; gap: 6px; }
-.cap .onde.duas { gap: 9px; }
-.cap .onde .linha { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: 6px 12px; }
+/* streaming e aluguel: lado a lado quando cabem; se não couber, o aluguel desce sozinho (Lucas, 19/11/2026) */
+.cap .onde.duas { flex-direction: row; flex-wrap: wrap; align-items: flex-start; gap: 9px 14px; }
+.cap .onde .linha { flex: 0 1 auto; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; }
+.cap .onde .logos { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
 .cap .onde span.rot { flex-basis: 100%; font-size: 10px; letter-spacing: .1em; opacity: 1; color: var(--orange); }
 .cap .onde span:not(.aviso) { opacity: .5; }
 .cap .onde span { font: 700 12px/1 var(--display); font-stretch: 75%; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
@@ -291,7 +297,8 @@ function logos(lista) {
 const PRINCIPAIS = new Set(["netflix", "prime", "appletv", "disney", "hbo"]);
 const naPrincipal = lista => lista.some(n => PRINCIPAIS.has(LOGO_DE[n]));
 function linha(rotulo, lista) {
-  const l = el("div", "linha"); l.append(el("span", "rot", rotulo), logos(lista)); return l;
+  const l = el("div", "linha"), lg = el("div", "logos");
+  lg.append(logos(lista)); l.append(el("span", "rot", rotulo), lg); return l;
 }
 function ondeEl(t) {
   const box = el("div", "onde");
@@ -379,6 +386,8 @@ function capa(t) {
   // Selo Lobine desligado por enquanto (12/11). Pra religar: MOSTRAR_SELO = true e voltar o botão no HTML.
   // ▶ no canto: sinal de "tem vídeo aqui" (a capa leva pro Reel)
   if (t.link) { const pl = el("span", "play"); pl.setAttribute("aria-hidden", "true"); box.append(pl); }
+  // etiqueta do tipo no canto de cima, só na aba Tudo (nas outras o tipo já está no título) — Lucas escolheu em 19/11/2026
+  if (!estado.tipo && t.capa && CAPAS[t.capa]) box.append(el("span", "tipo", TIPOS[t.tipo] || ""));
   if (MOSTRAR_SELO && t.selo) { const s = el("img", "selo-capa"); s.src = SELO; s.alt = "Selo Lobine de melhor do mundo"; box.append(s); }
   return box;
 }
