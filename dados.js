@@ -191,7 +191,8 @@ window.CATALOGO = {
       "tmdb_id": 107,
       "sentimentos": [
         "pra-rir",
-        "pra-se-empolgar"
+        "pra-se-empolgar",
+        "acelerado"
       ],
       "so_aluguel": false,
       "onde_link": "https://www.themoviedb.org/movie/107-snatch/watch?locale=BR",
