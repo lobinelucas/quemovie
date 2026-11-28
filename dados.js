@@ -1,6 +1,6 @@
 // Catálogo do site. Sentimentos, selo e links podem ser editados à mão; o "onde" é atualizado por atualizar_streaming.py.
 window.CATALOGO = {
-  "atualizado": "2026-11-27",
+  "atualizado": "2026-11-28",
   "fonte": "JustWatch via TMDB",
   "titulos": [
     {
